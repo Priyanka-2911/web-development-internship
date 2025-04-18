@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>web development task 3</title>
+  <style>
+    :root {
+      --bg-light: #f5f8ff;
+      --bg-dark: #121212;
+      --card-light: #ffffff;
+      --card-dark: #1f1f1f;
+      --text-light: #000000;
+      --text-dark: #ffffff;
+      --primary: #3f88ff;
+      --secondary: #4CAF50;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-light);
+      transition: background-color 0.4s, color 0.4s;
+    }
+
+    .dark-mode {
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    .navbar {
+      background-color: var(--primary);
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    .toggle-switch {
+      position:fixed;
+      top:30px;
+      right:10px;
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 5px;
+      background: white;
+      color: var(--primary);
+      font-weight: bold;
+      border: none;
+    }
+
+    .side-by-side {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 30px;
+    }
+
+    .half {
+      flex: 1 1 400px;
+      max-width: 500px;
+      background-color: var(--card-light);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      position: relative;
+      transition: background-color 0.4s, transform 0.3s;
+      animation: fadeIn 0.6s ease;
+    }
+
+    .dark-mode .half {
+      background-color: var(--card-dark);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 24px;
+    }
+
+    #question {
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    #answers button {
+      display: block;
+      margin: 8px auto;
+      padding: 10px 20px;
+      background: linear-gradient(to right, #00b4db, #0083b0);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      width: 80%;
+      transition: background-color 0.3s;
+    }
+
+    #answers button:hover {
+      background-color: #2b6ed7;
+    }
+
+    #get-joke {
+      padding: 10px 20px;
+      background: linear-gradient(to right, #00b4db, #0083b0);
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 15px;
+      transition: background-color 0.3s;
+    }
+
+    #get-joke:hover {
+      background: linear-gradient(to right, #00b4db, #0083b0);
+    }
+
+    #joke {
+      font-size: 16px;
+      text-align: center;
+      padding: 10px;
+    }
+
+    #score {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background: linear-gradient(to right, #00b4db, #0083b0);
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-weight: bold;
+      color: white;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      width:auto;
+      height:auto;
+      font-size:18px;
+    }
+
+    #progress {
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: #666;
+    }
+
+    @media (max-width: 768px) {
+      .side-by-side {
+        flex-direction: column;
+      }
+
+      .half {
+        width: 90%;
+        margin: 0 auto;
+      }
+
+      #score {
+        position: static;
+        margin-top: 15px;
+      }
+    }
+  </style>
+</head>
+<body style="background-image:url('quiz3.jpeg'); background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;">
+
+  
+    <h1 style="text-align: center; color:white; font-family:cursive">LAUGH WHILE YOU LEARN  
+ <button class="toggle-switch" onclick="toggleTheme()"> 🌗 Toggle Mode</button><h1>
+  
+
+  <div class="side-by-side">
+
+    <!-- Quiz Section -->
+    <section class="half">
+      <h2 style="font-family:cursive">🧠 Quick Quiz</h2>
+      <div id="quiz-container">
+        <div id="progress"></div>
+        <div id="question">Question will appear here</div>
+        <div id="answers"></div>
+      </div>
+      <div id="score">Score: 0</div>
+    </section>
+
+    <!-- Joke Section -->
+    <section class="half">
+      <h2 style="font-family:cursive">😂 Quick Laugh</h2>
+      <button id="get-joke" onclick="getJoke()">Tell me a joke</button>
+      <div id="joke">Ready to laugh?</div>
+    </section>
+
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "What does CSS stand for?",
+        answers: [
+          "Creative Style Sheets",
+          "Cascading Style Sheets",
+          "Colorful Style Sheets"
+        ],
+        correct: 1
+      },
+      {
+        question: "What does HTML stand for?",
+        answers: [
+          "Hyper Text Markup Language",
+          "Home Tool Markup Language",
+          "Hyperlinks and Text Markup Language"
+        ],
+        correct: 0
+      },
+      {
+        question: "Which language runs in a web browser?",
+        answers: [
+          "Java",
+          "C",
+          "JavaScript"
+        ],
+        correct: 2
+      },
+      {
+        question: "Which tag is used to create a link in HTML?",
+        answers: [
+          "<a>",
+          "<link>",
+          "<href>"
+        ],
+        correct: 0
+      }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    function showQuestion() {
+      const q = questions[currentQuestionIndex];
+      document.getElementById('question').textContent = q.question;
+      document.getElementById('progress').textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+      const answersDiv = document.getElementById('answers');
+      answersDiv.innerHTML = '';
+      q.answers.forEach((answer, index) => {
+        const btn = document.createElement('button');
+        btn.textContent = answer;
+        btn.onclick = () => checkAnswer(index);
+        answersDiv.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(index) {
+      if (index === questions[currentQuestionIndex].correct) {
+        score++;
+        document.getElementById('score').textContent = `Score: ${score}`;
+      }
+
+      currentQuestionIndex++;
+      if (currentQuestionIndex < questions.length) {
+        showQuestion();
+      } else {
+        document.getElementById('question').textContent = "Quiz Completed! 🎉";
+        document.getElementById('answers').innerHTML = '';
+        document.getElementById('progress').textContent = '';
+      }
+    }
+
+    function getJoke() {
+      const jokeDiv = document.getElementById("joke");
+      jokeDiv.textContent = "Loading joke...";
+
+      fetch("https://official-joke-api.appspot.com/random_joke")
+        .then(response => response.json())
+        .then(data => {
+          jokeDiv.textContent = `${data.setup} 🤔\n\n${data.punchline} 😂`;
+        })
+        .catch(() => {
+          jokeDiv.textContent = "Oops! Couldn't fetch a joke right now.";
+        });
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('dark-mode');
+    }
+
+    showQuestion();
+  </script>
+</body>
+</html>
