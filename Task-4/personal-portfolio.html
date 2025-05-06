@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+<title>Personal Portfolio</title>
+<style>
+  /* Reset and base */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  html, body {
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #121212;
+    color: #e0e0e0;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+  a {
+    color: #61dafb;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  /* Container */
+  .container {
+    max-width: 350px;
+    max-height: 600px;
+    margin: auto;
+    overflow-y: auto;
+    border: 1px solid #333;
+    border-radius: 8px;
+    background: #1e1e1e;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Navigation bar */
+  nav {
+    position: sticky;
+    top: 0;
+    background: #222;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.7);
+  }
+  nav ul {
+    display: flex;
+    justify-content: space-around;
+    list-style: none;
+  }
+  nav li {
+    flex: 1;
+    text-align: center;
+  }
+  nav button {
+    all: unset;
+    display: block;
+    width: 100%;
+    padding: 12px 0;
+    cursor: pointer;
+    font-weight: 600;
+    color: #61dafb;
+    user-select: none;
+    transition: background 0.3s ease;
+  }
+  nav button:hover, nav button.active {
+    background: #61dafb;
+    color: #121212;
+    border-radius: 4px;
+  }
+
+  /* Sections styling */
+  section {
+    padding: 20px 15px 40px 15px;
+  }
+  section h2 {
+    font-weight: 700;
+    margin-bottom: 16px;
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+    border-bottom: 2px solid #61dafb;
+    padding-bottom: 6px;
+  }
+
+  /* About Section */
+  .about p {
+    margin-bottom: 16px;
+    line-height: 1.4;
+    font-size: 0.95rem;
+  }
+  .skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .skill {
+    background: #333;
+    padding: 6px 10px;
+    border-radius: 16px;
+    font-size: 0.8rem;
+    color: #61dafb;
+    font-weight: 600;
+    user-select: none;
+    box-shadow: 0 0 8px #61dafb44;
+    transition: transform 0.2s;
+  }
+  .skill:hover {
+    transform: scale(1.1);
+  }
+
+  /* Projects Section */
+  .projects-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  @media (min-width: 350px) {
+    .projects-list {
+      grid-template-columns: 1fr;
+    }
+  }
+  .project-card {
+    background: #292929;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 0 8px #61dafb55;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+  }
+  .project-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    color: #61dafb;
+  }
+  .project-description {
+    flex-grow: 1;
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+    color: #cccccc;
+  }
+  .project-links a {
+    font-weight: 600;
+    margin-right: 12px;
+  }
+  .project-links a:hover {
+    color: #21a1f1;
+  }
+
+  /* Contact Section */
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+  }
+  .input-group {
+    margin-bottom: 14px;
+  }
+  label {
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+    display: block;
+  }
+  input[type="text"], input[type="email"], textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: none;
+    font-size: 0.9rem;
+  }
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+  button[type="submit"] {
+    background-color: #61dafb;
+    color: #121212;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 0;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  button[type="submit"]:hover {
+    background-color: #21a1f1;
+  }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    color: #555;
+    font-size: 0.8rem;
+    padding: 12px 0;
+    user-select: none;
+  }
+
+  /* Scrollbar Styling for container */
+  .container::-webkit-scrollbar {
+    width: 6px;
+  }
+  .container::-webkit-scrollbar-track {
+    background: #1e1e1e;
+  }
+  .container::-webkit-scrollbar-thumb {
+    background-color: #61dafb;
+    border-radius: 10px;
+  }
+</style>
+</head>
+<body>
+<div class="container" role="main" aria-label="Personal Portfolio Website">
+  <nav role="navigation" aria-label="Primary">
+    <ul>
+      <li><button class="nav-link active" data-target="about" aria-current="page">About</button></li>
+      <li><button class="nav-link" data-target="projects">Projects</button></li>
+      <li><button class="nav-link" data-target="contact">Contact</button></li>
+    </ul>
+  </nav>
+
+  <section id="about" tabindex="0" class="about" aria-labelledby="about-title">
+    <h2 id="about-title">About Me</h2>
+    <p>Hello! I'm Priyanka, a passionate full-stack web developer with a keen eye for clean, modern design and intuitive user experiences. I love turning ideas into beautiful, functional websites.</p>
+    <p>Here are some of my core skills:</p>
+    <div class="skills-list" aria-label="Skills list">
+      <div class="skill">JavaScript (ES6+)</div>
+      <div class="skill">React.js</div>
+      <div class="skill">HTML5 & CSS3</div>
+      <div class="skill">Node.js</div>
+      <div class="skill">Express.js</div>
+      <div class="skill">Responsive Design</div>
+      <div class="skill">Git & GitHub</div>
+      <div class="skill">REST APIs</div>
+    </div>
+  </section>
+
+  <section id="projects" tabindex="0" class="projects" aria-labelledby="projects-title" hidden>
+    <h2 id="projects-title">Projects</h2>
+    <div class="projects-list" role="list">
+      
+      <article class="project-card" role="listitem" tabindex="0">
+        <div class="project-title">To-Do List App</div>
+        <div class="project-description">A simple, responsive to-do list app with persistent tasks saved in browser localStorage.</div>
+        <div class="project-links">
+          <a href="todo-app.html" target="_blank" rel="noopener noreferrer">Live Demo</a>
+        </div>
+      </article>
+      <article class="project-card" role="listitem" tabindex="0">
+        <div class="project-title">Product Listing Page</div>
+        <div class="project-description">An interactive product listing page with filters by category/price and sorting by rating and more.</div>
+        <div class="project-links">
+          <a href="product-listing.html" target="_blank" rel="noopener noreferrer">Live Demo</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="contact" tabindex="0" class="contact" aria-labelledby="contact-title" hidden>
+    <h2 id="contact-title">Contact Me</h2>
+    <p>If you'd like to get in touch, feel free to send me a message or connect via social media!</p>
+    <form class="contact-form" aria-label="Contact form" onsubmit="submitForm(event)" novalidate>
+      <div class="input-group">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" placeholder="Your name" aria-required="true" required />
+      </div>
+      <div class="input-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" placeholder="you@example.com" aria-required="true" required />
+      </div>
+      <div class="input-group">
+        <label for="message">Message:</label>
+        <textarea id="message" name="message" placeholder="Your message" aria-required="true" required></textarea>
+      </div>
+      <button type="submit">Send Message</button>
+    </form>
+    <div id="form-status" role="alert" aria-live="polite" style="margin-top: 10px; color:#61dafb;"></div>
+    <div style="margin-top:20px; font-size:0.9rem;">
+      <b>Email:</b> <a href="mailto:priyaspriya13831@gmail.com">priyaspriya13831@gmail.com</a><br/>
+      <b>GitHub:</b> <a href="https://github.com/Priyanka-2911" target="_blank" rel="noopener noreferrer">https://github.com/Priyanka-2911</a><br/>
+      <b>LinkedIn:</b> <a href="https://www.linkedin.com/in/priyanka-s-53822a304/ target="_blank" rel="noopener noreferrer">https://www.linkedin.com/in/priyanka-s-53822a304/</a>
+    </div>
+  </section>
+  <footer aria-label="Footer">© 2024 Priyanka S</footer>
+</div>
+
+<script>
+  // Navigation Buttons logic to toggle visible sections
+  const navButtons = document.querySelectorAll('.nav-link');
+  const sections = {
+    about: document.getElementById('about'),
+    projects: document.getElementById('projects'),
+    contact: document.getElementById('contact')
+  };
+
+  navButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Update active state
+      navButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      // Show corresponding section, hide others
+      const target = btn.dataset.target;
+      for (const key in sections) {
+        if (key === target) {
+          sections[key].hidden = false;
+          sections[key].focus();
+        } else {
+          sections[key].hidden = true;
+        }
+      }
+      // Scroll container to top on switching sections
+      document.querySelector('.container').scrollTop = 0;
+    });
+  });
+
+  // Contact form submission handler (simulated)
+  function submitForm(e){
+    e.preventDefault();
+    const statusDiv = document.getElementById('form-status');
+    const form = e.target;
+    if(!form.checkValidity()) {
+      statusDiv.textContent = 'Please fill out all fields correctly.';
+      return;
+    }
+    // Simulate form submission success
+    statusDiv.textContent = 'Sending message...';
+    setTimeout(() => {
+      statusDiv.textContent = 'Thank you! Your message has been sent.';
+      form.reset();
+    }, 1200);
+  }
+</script>
+</body>
+</html>

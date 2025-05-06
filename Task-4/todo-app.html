@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+<title>To-Do List App</title>
+<style>
+  body, html {
+    margin: 0; padding: 0; height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #121212;
+    color: #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .app-container {
+    max-width: 350px;
+    max-height: 600px;
+    background: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-sizing: border-box;
+    box-shadow: 0 0 15px #61dafb55;
+  }
+  h1 {
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.6rem;
+    margin-bottom: 18px;
+    color: #61dafb;
+    user-select: none;
+    letter-spacing: 0.08em;
+  }
+  form {
+    display: flex;
+    margin-bottom: 15px;
+  }
+  input[type="text"] {
+    flex-grow: 1;
+    border: none;
+    border-radius: 6px 0 0 6px;
+    padding: 10px 12px;
+    font-size: 1rem;
+    outline: none;
+    background: #292929;
+    color: #e0e0e0;
+    transition: box-shadow 0.3s ease;
+  }
+  input[type="text"]:focus {
+    box-shadow: 0 0 8px #61dafb;
+  }
+  button.add-btn {
+    background: #61dafb;
+    color: #121212;
+    border: none;
+    border-radius: 0 6px 6px 0;
+    padding: 10px 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+  button.add-btn:hover {
+    background: #21a1f1;
+  }
+  ul.todo-list {
+    list-style: none;
+    overflow-y: auto;
+    flex-grow: 1;
+    padding-right: 6px;
+    margin: 0;
+  }
+  ul.todo-list::-webkit-scrollbar {
+    width: 6px;
+  }
+  ul.todo-list::-webkit-scrollbar-thumb {
+    background-color: #61dafb;
+    border-radius: 10px;
+  }
+  li.todo-item {
+    background: #292929;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+    box-shadow: 0 0 8px #61dafb44;
+    transition: background-color 0.3s ease;
+  }
+  li.todo-item:hover {
+    background: #333;
+  }
+  li.todo-item.completed .task-text {
+    text-decoration: line-through;
+    opacity: 0.6;
+  }
+  .task-text {
+    flex-grow: 1;
+    font-size: 1rem;
+    margin-left: 12px;
+    word-break: break-word;
+  }
+  input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #61dafb;
+  }
+  button.delete-btn {
+    background: transparent;
+    border: none;
+    color: #ff4c4c;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: color 0.3s ease;
+    user-select: none;
+  }
+  button.delete-btn:hover {
+    color: #ff0000;
+  }
+  /* Footer */
+  footer {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #555;
+    user-select: none;
+  }
+</style>
+</head>
+<body>
+  <div class="app-container" role="main" aria-label="To-Do List Application">
+    <h1>My To-Do List</h1>
+    <form id="todo-form" aria-label="Add new to-do task">
+      <input type="text" id="todo-input" placeholder="Add a new task..." aria-required="true" autocomplete="off" />
+      <button type="submit" class="add-btn" aria-label="Add task button">Add</button>
+    </form>
+    <ul id="todo-list" class="todo-list" aria-live="polite" aria-relevant="additions removals" role="list"></ul>
+    <footer>© 2024 Jane Doe</footer>
+  </div>
+
+<script>
+  const todoForm = document.getElementById('todo-form');
+  const todoInput = document.getElementById('todo-input');
+  const todoList = document.getElementById('todo-list');
+
+  // Load tasks from localStorage or empty array
+  let tasks = JSON.parse(localStorage.getItem('todoTasks')) || [];
+
+  // Save to localStorage function
+  function saveTasks() {
+    localStorage.setItem('todoTasks', JSON.stringify(tasks));
+  }
+
+  // Render tasks to the DOM
+  function renderTasks() {
+    todoList.innerHTML = ''; // Clear the list
+    if(tasks.length === 0) {
+      const emptyMsg = document.createElement('li');
+      emptyMsg.textContent = 'No tasks yet. Add something!';
+      emptyMsg.style.opacity = '0.6';
+      emptyMsg.style.fontStyle = 'italic';
+      emptyMsg.style.userSelect = 'none';
+      todoList.appendChild(emptyMsg);
+      return;
+    }
+    tasks.forEach((task, index) => {
+      const li = document.createElement('li');
+      li.className = 'todo-item';
+      if(task.completed) li.classList.add('completed');
+      li.setAttribute('data-index', index);
+      
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.checked = task.completed;
+      checkbox.setAttribute('aria-label', 'Mark task as completed');
+      checkbox.addEventListener('change', () => {
+        tasks[index].completed = checkbox.checked;
+        saveTasks();
+        renderTasks();
+      });
+
+      const span = document.createElement('span');
+      span.className = 'task-text';
+      span.textContent = task.text;
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.className = 'delete-btn';
+      deleteBtn.setAttribute('aria-label', 'Delete task');
+      deleteBtn.innerHTML = '&times;';
+      deleteBtn.addEventListener('click', () => {
+        tasks.splice(index, 1);
+        saveTasks();
+        renderTasks();
+      });
+
+      li.appendChild(checkbox);
+      li.appendChild(span);
+      li.appendChild(deleteBtn);
+      todoList.appendChild(li);
+    });
+  }
+
+  // Handle form submit
+  todoForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const text = todoInput.value.trim();
+    if(text === '') return;
+    tasks.push({ text, completed: false });
+    saveTasks();
+    renderTasks();
+    todoInput.value = '';
+    todoInput.focus();
+  });
+
+  // Initial render
+  renderTasks();
+</script>
+</body>
+</html>
+

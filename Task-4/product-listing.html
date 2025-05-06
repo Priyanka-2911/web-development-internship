@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+<title>Product Listing</title>
+<style>
+  body, html {
+    margin: 0; padding: 0; height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #121212;
+    color: #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .app-container {
+    max-width: 350px;
+    max-height: 600px;
+    background: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 10px;
+    padding: 15px;
+    box-sizing: border-box;
+    box-shadow: 0 0 15px #61dafb55;
+    display: flex;
+    flex-direction: column;
+  }
+  h1 {
+    text-align: center;
+    color: #61dafb;
+    margin-bottom: 15px;
+    font-weight: 700;
+    font-size: 1.5rem;
+    user-select: none;
+  }
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    gap: 8px;
+  }
+  .filter-group {
+    flex: 1 1 100%;
+  }
+  label {
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+    display: block;
+    user-select: none;
+  }
+  select {
+    width: 100%;
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+    font-size: 0.9rem;
+    background: #292929;
+    color: #e0e0e0;
+  }
+  select:focus {
+    box-shadow: 0 0 8px #61dafb;
+  }
+  .product-list {
+    overflow-y: auto;
+    flex-grow: 1;
+  }
+  .product-list::-webkit-scrollbar {
+    width: 6px;
+  }
+  .product-list::-webkit-scrollbar-thumb {
+    background-color: #61dafb;
+    border-radius: 10px;
+  }
+  .product-card {
+    background: #292929;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 10px;
+    box-shadow: 0 0 7px #61dafb33;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+  }
+  .product-name {
+    font-weight: 700;
+    color: #61dafb;
+    font-size: 1rem;
+    margin-bottom: 4px;
+  }
+  .product-category, .product-price, .product-rating {
+    font-size: 0.85rem;
+    color: #cccccc;
+    margin-bottom: 3px;
+  }
+  .product-rating {
+    color: #f0c040;
+  }
+  footer {
+    margin-top: 12px;
+    font-size: 0.8rem;
+    text-align: center;
+    color: #555;
+    user-select: none;
+  }
+</style>
+</head>
+<body>
+  <div class="app-container" role="main" aria-label="Product Listing Page">
+    <h1>Products</h1>
+    <div class="filters" aria-label="Product filters">
+      <div class="filter-group">
+        <label for="filter-category">Filter by Category:</label>
+        <select id="filter-category" aria-controls="product-list" aria-label="Filter products by category">
+          <option value="all">All Categories</option>
+          <option value="electronics">Electronics</option>
+          <option value="clothing">Clothing</option>
+          <option value="books">Books</option>
+          <option value="home">Home</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="filter-price">Filter by Price:</label>
+        <select id="filter-price" aria-controls="product-list" aria-label="Filter products by maximum price">
+          <option value="all">All Prices</option>
+          <option value="25">$0 - $25</option>
+          <option value="50">$0 - $50</option>
+          <option value="100">$0 - $100</option>
+          <option value="200">$0 - $200</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="sort-by">Sort By:</label>
+        <select id="sort-by" aria-controls="product-list" aria-label="Sort products by criteria">
+          <option value="rating-desc">Rating: High to Low</option>
+          <option value="rating-asc">Rating: Low to High</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="name-asc">Name: A to Z</option>
+          <option value="name-desc">Name: Z to A</option>
+        </select>
+      </div>
+    </div>
+    <div class="product-list" id="product-list" role="list" tabindex="0" aria-live="polite"></div>
+    <footer>© 2024 Jane Doe</footer>
+  </div>
+
+<script>
+  const products = [
+    { id: 1, name: "Smartphone", category: "electronics", price: 199, rating: 4.5 },
+    { id: 2, name: "Jeans", category: "clothing", price: 40, rating: 4.0 },
+    { id: 3, name: "LED TV", category: "electronics", price: 550, rating: 4.8 },
+    { id: 4, name: "Novel - The Great Gatsby", category: "books", price: 15, rating: 4.3 },
+    { id: 5, name: "Coffee Maker", category: "home", price: 80, rating: 3.9 },
+    { id: 6, name: "T-Shirt", category: "clothing", price: 20, rating: 3.7 },
+    { id: 7, name: "Bookshelf", category: "home", price: 120, rating: 4.2 },
+    { id: 8, name: "Bluetooth Speaker", category: "electronics", price: 55, rating: 4.6 },
+    { id: 9, name: "Cookbook", category: "books", price: 35, rating: 4.1 },
+    { id: 10, name: "Sweater", category: "clothing", price: 60, rating: 4.4 }
+  ];
+
+  const filterCategory = document.getElementById('filter-category');
+  const filterPrice = document.getElementById('filter-price');
+  const sortBy = document.getElementById('sort-by');
+  const productList = document.getElementById('product-list');
+
+  function filterAndSortProducts() {
+    let filtered = products.slice();
+
+    // Filter by category
+    const category = filterCategory.value;
+    if (category !== 'all') {
+      filtered = filtered.filter(p => p.category === category);
+    }
+
+    // Filter by price
+    const priceFilter = filterPrice.value;
+    if (priceFilter !== 'all') {
+      const maxPrice = parseFloat(priceFilter);
+      filtered = filtered.filter(p => p.price <= maxPrice);
+    }
+
+    // Sort
+    const sortValue = sortBy.value;
+    filtered.sort((a, b) => {
+      switch(sortValue) {
+        case 'rating-desc': return b.rating - a.rating;
+        case 'rating-asc': return a.rating - b.rating;
+        case 'price-asc': return a.price - b.price;
+        case 'price-desc': return b.price - a.price;
+        case 'name-asc': return a.name.localeCompare(b.name);
+        case 'name-desc': return b.name.localeCompare(a.name);
+        default: return 0;
+      }
+    });
+
+    renderProducts(filtered);
+  }
+
+  function renderProducts(list) {
+    productList.innerHTML = '';
+    if(list.length === 0) {
+      const noResult = document.createElement('div');
+      noResult.textContent = "No products match the selected filters.";
+      noResult.style.opacity = '0.7';
+      noResult.style.textAlign = 'center';
+      productList.appendChild(noResult);
+      return;
+    }
+    list.forEach(p => {
+      const card = document.createElement('article');
+      card.className = 'product-card';
+      card.setAttribute('role', 'listitem');
+      card.tabIndex = 0;
+
+      const nameEl = document.createElement('div');
+      nameEl.className = 'product-name';
+      nameEl.textContent = p.name;
+
+      const categoryEl = document.createElement('div');
+      categoryEl.className = 'product-category';
+      categoryEl.textContent = `Category: ${capitalize(p.category)}`;
+
+      const priceEl = document.createElement('div');
+      priceEl.className = 'product-price';
+      priceEl.textContent = `Price: $${p.price.toFixed(2)}`;
+
+      const ratingEl = document.createElement('div');
+      ratingEl.className = 'product-rating';
+      ratingEl.textContent = '★'.repeat(Math.floor(p.rating)) + (p.rating % 1 >= 0.5 ? '½' : '');
+
+      card.appendChild(nameEl);
+      card.appendChild(categoryEl);
+      card.appendChild(priceEl);
+      card.appendChild(ratingEl);
+      productList.appendChild(card);
+    });
+  }
+  function capitalize(s) {
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
+  filterCategory.addEventListener('change', filterAndSortProducts);
+  filterPrice.addEventListener('change', filterAndSortProducts);
+  sortBy.addEventListener('change', filterAndSortProducts);
+
+  // Initial render
+  filterAndSortProducts();
+</script>
+</body>
+</html>
+
